@@ -1,6 +1,8 @@
 const createError = require('http-errors');
 const User = require("../models/user.model");
 const { successResponse } = require('./response.controller');
+const mongoose = require('mongoose');
+const { findItemById } = require('../services/findItem');
 
 const UserController = {
     getAll: async (req, res, next) => {
@@ -22,7 +24,7 @@ const UserController = {
             }
             const users = await User.find(filter, options).limit(limit).skip((page - 1) * limit);
             const count = await User.find(filter).countDocuments();
-            if (!users) throw createError(404, "Users Not Found");
+            if (!users) { throw createError(404, "Users Not Found") };
             successResponse(res, {
                 statusCode: 200,
                 message: "Users were Returned Successfully",
@@ -34,6 +36,25 @@ const UserController = {
                         previousPage: page - 1 > 0 ? page - 1 : null,
                         nextPage: page + 1 <= Math.ceil(count / limit) ? page + 1 : null
                     }
+                }
+            })
+
+        } catch (error) {
+            next(error);
+        }
+    },
+    getById: async (req, res, next) => {
+        try {
+            const id = req.params.id;
+            const options = {
+                password: 0
+            }
+            const user = await findItemById(User, id, options);
+            successResponse(res, {
+                statusCode: 200,
+                message: `User with id: ${id} was returned successfully`,
+                payload: {
+                    user
                 }
             })
 
