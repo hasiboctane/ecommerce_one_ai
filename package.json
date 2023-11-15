@@ -1,0 +1,32 @@
+{
+  "name": "ecommerce_one_ai",
+  "version": "1.0.0",
+  "description": "Inspired by Anisul Islam(YT)",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "test": "node index.js"
+  },
+  "keywords": [
+    "express",
+    "js",
+    "ecommerce",
+    "node",
+    "js",
+    "mongodb",
+    "mongoose"
+  ],
+  "author": "Hasib islam",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "http-errors": "^2.0.0",
+    "mongoose": "^8.0.0"
+  },
+  "devDependencies": {
+    "morgan": "^1.10.0",
+    "nodemon": "^3.0.1"
+  }
+}
