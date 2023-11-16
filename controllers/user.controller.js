@@ -5,6 +5,8 @@ const mongoose = require('mongoose');
 const { findItemById } = require('../services/findItem');
 const fs = require('fs');
 const deleteImage = require('../helpers/deleteImage');
+const { createJSONWebToken } = require('../helpers/jsonwebtoken');
+const { jwtActivationKey } = require('../config/secret');
 
 const UserController = {
     getAll: async (req, res, next) => {
@@ -80,8 +82,25 @@ const UserController = {
             message: `User with id: ${id} was deleted`
         })
     },
-    add: (req, res, next) => {
-        res.send('Add user')
+    registerUser: async (req, res, next) => {
+        try {
+            const { name, email, password, phone, address } = req.body;
+            const userExist = await User.exists({ email });
+            if (userExist) {
+                throw createError(409, "User already exists Please Sign in");
+            }
+            const token = createJSONWebToken({ name, email, password, phone, address }, jwtActivationKey, '10m');
+
+            successResponse(res, {
+                statusCode: 201,
+                message: "User was created successfully",
+                payload: {
+                    token
+                }
+            })
+        } catch (error) {
+            next(error);
+        }
     }
 }
 module.exports = UserController;
