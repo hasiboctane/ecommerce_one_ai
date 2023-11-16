@@ -1,9 +1,10 @@
 const createError = require('http-errors');
 const User = require("../models/user.model");
-const { successResponse } = require('./response.controller');
+const { successResponse, errorResponse } = require('./response.controller');
 const mongoose = require('mongoose');
 const { findItemById } = require('../services/findItem');
 const fs = require('fs');
+const deleteImage = require('../helpers/deleteImage');
 
 const UserController = {
     getAll: async (req, res, next) => {
@@ -69,13 +70,12 @@ const UserController = {
         const id = req.params.id;
         const options = { password: 0 };
         const user = await findItemById(User, id, options);
-
         // Delete image from folder
         const imagePath = user.image;
-        fs.unlinkSync(imagePath);
+        deleteImage(imagePath);
         // Delete user
-        await User.findByIdAndDelete({ _id: id, isAdmin: false });
-        successResponse(res, {
+        await User.deleteOne({ _id: id, isAdmin: false });
+        return successResponse(res, {
             statusCode: 200,
             message: `User with id: ${id} was deleted`
         })
